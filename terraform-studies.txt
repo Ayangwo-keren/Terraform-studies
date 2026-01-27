@@ -1,0 +1,103 @@
+# Terraform Overview
+
+## What is Terraform?
+Terraform is an Infrastructure as Code (IaC) tool developed by HashiCorp that allows you to define, provision, and manage cloud infrastructure using declarative configuration files. It works with multiple cloud providers (AWS, Azure, GCP, etc.) and on-premises infrastructure.
+
+## Key Concepts
+- **Declarative**: You describe the desired end state, and Terraform figures out how to achieve it
+- **Provider-agnostic**: Works with multiple cloud providers and services
+- **State management**: Tracks the current state of your infrastructure
+- **Plan before apply**: Preview changes before executing them
+
+## Core Terraform Files
+
+### 1. main.tf
+- **Purpose**: Primary configuration file containing resource definitions
+- **Contains**: Provider configuration, resources, data sources
+- **Example**: EC2 instances, S3 buckets, VPCs, etc.
+
+### 2. variables.tf
+- **Purpose**: Define input variables for your configuration
+- **Contains**: Variable declarations with types, defaults, and descriptions
+- **Benefits**: Makes configurations reusable and customizable
+
+### 3. outputs.tf
+- **Purpose**: Define output values to display after terraform apply
+- **Contains**: Output declarations that expose information about resources
+- **Use cases**: Display IPs, URLs, resource IDs for use by other modules
+
+### 4. terraform.tfvars
+- **Purpose**: Assign actual values to declared variables
+- **Contains**: Variable assignments (key-value pairs)
+- **Note**: Often excluded from version control if it contains sensitive data
+- **Alternative**: Can use environment variables or CLI flags
+
+### 5. provider.tf (or in main.tf)
+- **Purpose**: Configure provider settings
+- **Contains**: Provider blocks with authentication and region settings
+- **Example**: AWS provider with region and credentials
+
+### 6. versions.tf
+- **Purpose**: Specify required Terraform and provider versions
+- **Contains**: Version constraints for Terraform core and providers
+- **Benefits**: Ensures consistent behavior across environments
+
+### 7. backend.tf (or in main.tf)
+- **Purpose**: Configure remote state storage
+- **Contains**: Backend configuration (S3, Azure Storage, Terraform Cloud, etc.)
+- **Benefits**: Enables team collaboration and state locking
+
+## Special Files & Directories
+
+### terraform.tfstate
+- **Purpose**: Stores the current state of your infrastructure
+- **Auto-generated**: Created after first `terraform apply`
+- **Important**: Should be stored remotely in production (never in Git)
+- **Contains**: Mapping between configuration and real-world resources
+
+### terraform.tfstate.backup
+- **Purpose**: Backup of the previous state file
+- **Auto-generated**: Created when state is modified
+
+### .terraform/ directory
+- **Purpose**: Contains provider plugins and modules
+- **Auto-generated**: Created after `terraform init`
+- **Should be**: Added to .gitignore
+
+### .terraform.lock.hcl
+- **Purpose**: Lock file for provider versions
+- **Auto-generated**: Created/updated by `terraform init`
+- **Should be**: Committed to version control
+
+## Basic Terraform Workflow
+
+1. **terraform init**: Initialize working directory and download providers
+2. **terraform plan**: Preview changes to be made
+3. **terraform apply**: Execute the planned changes
+4. **terraform destroy**: Tear down all managed infrastructure
+
+## File Organization Best Practices
+
+```
+project/
+├── main.tf              # Main resource definitions
+├── variables.tf         # Variable declarations
+├── outputs.tf           # Output definitions
+├── terraform.tfvars     # Variable values (exclude if sensitive)
+├── provider.tf          # Provider configuration
+├── versions.tf          # Version constraints
+├── backend.tf           # Remote state configuration
+├── .terraform/          # Provider plugins (gitignore)
+├── .terraform.lock.hcl  # Provider version lock file
+└── terraform.tfstate    # State file (use remote backend)
+```
+
+## Additional Tips
+
+- Use modules to organize and reuse code
+- Store state remotely (S3, Azure Blob, Terraform Cloud)
+- Use workspaces for multiple environments (dev, staging, prod)
+- Keep sensitive data in separate files or use secret management tools
+- Always run `terraform plan` before `terraform apply`
+- Use version control for your .tf files
+- Document your infrastructure with comments
